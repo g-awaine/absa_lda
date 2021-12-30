@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+</head>
+
+<body>
+	{% extends "index.html" %}
+	{% block analysis %}
+	<h2 class="text-center text-white bg-dark">Results</h2><BR><BR>
+	<table>
+		<tr>
+			<th>Break down of the review:</th>
+		</tr>
+		{% for row in table %}
+		{{ row|safe }}
+		{% endfor %}
+	</table>
+	{% endblock %}
+</body>
+
+</html>

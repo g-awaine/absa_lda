@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Aspect Based Sentiment Analysis</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+	<div class="jumbotron">
+		<h1 class="text-center">Restaurant Review Sentiment Analysis</h1><BR><BR>
+		<p>
+			To analyze a multi-aspect review, it is first split into different phrases, each corresponding to a specific
+			component of the services provided by a restaurant.
+		</p>
+		<p>
+			For each phrase, the general topic (aspect) discussed, its sentiment (positive/negative/neutral), the
+			subject of discussion, and the specific descriptors used by the reviewer are extracted.
+		</p>
+		<p>
+			Here is a diagram depicting the pipeline for the analysis of each phrase in the review.
+		</p>
+		<BR>
+		<figure class="text-center">
+			<img src="{{url_for('static', filename='fig1.png')}}">
+			<!-- <figcaption class="figure-caption">Average salary (thousands of dollars) </figcaption> -->
+		</figure>
+
+		<BR><BR>
+		<h3 class="text-center">Enter a review</h3><BR>
+		<form align="center" action="/analysis" method="post">
+			<input type="text" class="form-control" name="review">
+			<BR>
+
+			<input type="submit" value="Submit" class="btn-lg">
+		</form>
+
+	</div>
+
+	<div class="container">
+
+		{% block analysis %}
+		{% endblock %}
+
+		<BR><BR><BR>
+
+	</div>
+</body>
+
+</html>
