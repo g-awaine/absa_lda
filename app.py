@@ -35,9 +35,9 @@ sia = SentimentIntensityAnalyzer()
 # load the nlp model for POS and dependency tagging
 nlp = spacy.load("en_core_web_sm")
 
-# Array of aspects names for class prdiction, using supervised classification
-aspects = ['food', 'menu', 'service', 'place', 'price', 'miscellaneous',
-           'staff', 'ambience']
+# Array of aspects names for class prediction, using supervised classification
+# aspects = ['food', 'menu', 'service', 'place', 'price', 'miscellaneous',
+#            'staff', 'ambience']
 
 
 # Mappings between topics index and aspects using topic modeling methods
@@ -110,7 +110,7 @@ def get_main_topic(processed_text, model, topics_names, model_type='NMF'):
 
 
 def get_sentiment(text):
-    '''return the sentiment. ouput: positive/negative/neutral'''
+    '''return the sentiment. output: positive/negative/neutral'''
     scores = sia.polarity_scores(text)
     if scores['compound'] > 0:
         return 'positive'
@@ -128,7 +128,7 @@ def get_descriptors(text):
         return token.dep_ == 'amod' or token.pos_ == 'ADJ'
 
     def get_children(token):
-        '''get a list reprsenting all adjectives that are either first 
+        '''get a list representing all adjectives that are either first 
         or second order children of a given token.'''
         first_ch = [child for child in token.children
                     if child.pos_ not in ['AUX', 'VERB']]
@@ -173,7 +173,7 @@ def index():
 @app.route('/analysis', methods=['POST'])
 def analysis():
     text = request.form['review']
-    phrases = [txt.strip() for txt in text.split('.') if len(txt) > 0]
+    phrases = [txt.strip() for txt in text.split('.') if len(txt) > 0] # splits the text into individual sentences by their punctuation
     output = {}
     for phrase in phrases:
         # Text processing
@@ -182,23 +182,28 @@ def analysis():
 
         # identify aspects using all models and concatenate them
         topics_full = []
+
         # supervised model
-        label = classifier.predict(preprocessed)
-        aspects_pred = [aspects[i] for i, is_predicted
-                        in enumerate(label.reshape(-1)) if is_predicted]
-        topics_full.extend(aspects_pred)
+        # label = classifier.predict(preprocessed)
+        # aspects_pred = [aspects[i] for i, is_predicted
+        #                 in enumerate(label.reshape(-1)) if is_predicted]
+        # topics_full.extend(aspects_pred)
+
         # NMF with Frobenius norm
         topics = get_main_topic(preprocessed, nmf_fn, nmf_fnTopic_to_aspect,
                                 model_type='NMF')
         topics_full.extend(topics)
+
         # NMF with Kullback-Leibler divergence
         topics = get_main_topic(preprocessed, nmf_kl, nmf_klTopic_to_aspect,
                                 model_type='NMF')
         topics_full.extend(topics)
+
         # LDA
         topics = get_main_topic(preprocessed_lda, lda_model, ldaTopic_to_aspect,
                                 model_type='LDA')
         topics_full.extend(topics)
+
         # Select topic with highest vote
         counts = Counter(topics_full)
         main_topics = [topic for (topic, count) in counts.items()
@@ -220,7 +225,7 @@ def analysis():
     df = pd.DataFrame.from_dict(output, orient='index',
                                 columns=['Topic', 'Sentiment',
                                          'Discussion Subject', 'Descriptors'])
-
+    print(df)
     return render_template('analysis.html',
                            table=[df.to_html(justify='left', bold_rows=False,
                                              classes=["table-striped"])])
